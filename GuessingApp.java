@@ -1,14 +1,15 @@
 
 /*
     Guessing App -  Game Initialization
-    -This Class Serve as entry point for application
-    -It Intialize the game configuration and display the rules
-    -Generate Hint for User on Wrong Guess
-    -Validate the Input from the User
-    -Store the result of the Game 
+    UC1-This Class Serve as entry point for application
+    UC2-Validate the Guess of User
+    UC3-Generate Hint for User on Wrong Guess
+    UC4-Validate the Input from the User
+    UC5-Store the result of the Game 
+    UC6-Restart or exit based on User chpice
 
     @author - developer
-    @version - 5.0
+    @version - 6.0
 */
 
 import java.util.Scanner;
@@ -21,33 +22,38 @@ public class GuessingApp {
         System.out.println("========================\n");
 
         Scanner scanner = new Scanner(System.in);
+        boolean restart;
+        do{
+            System.out.print("Enter your name: ");
+            String player = scanner.nextLine();
+            
+            GameConfig gameConfig = new GameConfig();
+            gameConfig.showRules();
 
-        System.out.print("Enter your name: ");
-        String player = scanner.nextLine();
+            int attempts = 0 , hintUsed = 0;
+            boolean win = false;
+
+            while(attempts < gameConfig.getMaxAttempts()){
+                System.out.println("Enter your guess: ");
+                int guess = ValidationService.validateInput(scanner.nextLine());
+                attempts++;
+
+                String result = GuessValidator.validateGuess(guess,gameConfig.getTargetNumber());
+
+                if(!"CORRECT".equals(result) && hintUsed < gameConfig.getMaxHint()){
+                    hintUsed++;
+                    System.out.println(HintService.generateHint(gameConfig.getTargetNumber(),hintUsed));
+                }
+                if("CORRECT".equals(result)){
+                    win = true;
+                    break;
+                }
+                System.out.println(result);
+            }
+            StorageService.saveResult(player,attempts,win);
+            restart = GameController.restartGame(scanner);
+        }while(restart);
         
-        GameConfig gameConfig = new GameConfig();
-        gameConfig.showRules();
-
-        int attempts = 0 , hintUsed = 0;
-        boolean win = false;
-
-        while(attempts < gameConfig.getMaxAttempts()){
-            System.out.println("Enter your guess: ");
-            int guess = ValidationService.validateInput(scanner.nextLine());
-            attempts++;
-
-            String result = GuessValidator.validateGuess(guess,gameConfig.getTargetNumber());
-
-            if(!"CORRECT".equals(result) && hintUsed < gameConfig.getMaxHint()){
-                hintUsed++;
-                System.out.println(HintService.generateHint(gameConfig.getTargetNumber(),hintUsed));
-            }
-            if("CORRECT".equals(result)){
-                win = true;
-                break;
-            }
-            System.out.println(result);
-        }
-        StorageService.saveResult(player,attempts,win);
+        scanner.close();
     }
 }

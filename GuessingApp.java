@@ -4,15 +4,16 @@
     -This Class Serve as entry point for application
     -It Intialize the game configuration and display the rules
     -Generate Hint for User on Wrong Guess
+    -Validate the Input from the User
 
     @author - developer
-    @version - 3.0
+    @version - 4.0
 */
 
 import java.util.Scanner;
 
 public class GuessingApp {
-    public static void main(String[] args){
+    public static void main(String[] args) throws InvalidInputException{
         System.out.println("Welcome to Guessing App ");
         GameConfig gameConfig = new GameConfig();
         gameConfig.showRules();
@@ -21,7 +22,7 @@ public class GuessingApp {
         int attempts = 0 , hintUsed = 0;
         while(attempts < gameConfig.getMaxAttempts()){
             System.out.println("Enter your guess: ");
-            int guess = scanner.nextInt();
+            int guess = ValidationService.validateInput(scanner.nextLine());
             attempts++;
 
             String result = GuessValidator.validateGuess(guess,gameConfig.getTargetNumber());

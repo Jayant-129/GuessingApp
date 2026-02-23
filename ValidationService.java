@@ -1,0 +1,23 @@
+/*
+    UC4 - Handle Validation of Input from User
+    before it is used in Game 
+    All input checks are centralized to keep
+    main() clean and focused
+
+        @author - developer
+    @version - 4.0
+*/
+class ValidationService{
+    public static int validateInput(String input) throws InvalidInputException{
+        try{
+            int value = Integer.parseInt(input);
+            if(value < 1 || value > 100){
+                throw new InvalidInputException("Number must be between 1 and 100.");
+            }
+            return value;
+        }
+        catch(NumberFormatException e){
+            throw new InvalidInputException("Invalid Input. Please enter number only.");
+        }
+    }
+}
